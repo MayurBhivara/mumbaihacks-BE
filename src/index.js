@@ -1,15 +1,6 @@
-const mongoose = require('mongoose');
 const app = require('./app');
-const config = require('./config/config');
-const logger = require('./config/logger');
 
 let server;
-mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
-  logger.info('Connected to MongoDB');
-  server = app.listen(config.port, () => {
-    logger.info(`Listening to port ${config.port}`);
-  });
-});
 
 const exitHandler = () => {
   if (server) {
@@ -31,8 +22,12 @@ process.on('uncaughtException', unexpectedErrorHandler);
 process.on('unhandledRejection', unexpectedErrorHandler);
 
 process.on('SIGTERM', () => {
-  logger.info('SIGTERM received');
+  console.log('SIGTERM received');
   if (server) {
     server.close();
   }
+});
+
+app.listen(3000, () => {
+  console.log("Server started on port " + 3000);
 });
