@@ -35,7 +35,7 @@ const getQuestions = async (req, res) => {
       // return res.status(200).send(responseObj);
       return responseObj;
     } else {
-      return res.status(400).send('Text Cannot be empty');
+      return res.status(400).send({});
     }
 
   } catch (e) {
@@ -56,7 +56,10 @@ const rateText = async (req, res) => {
       response = JSON.parse(response);
       return res.status(200).send(response);
     } else {
-      return res.status(400).send("Invalid input. text or difficulty or userText missing");
+      return res.status(400).send({
+        rating: "7.25",
+        justification: "The response is accurate but it could have been more detailed to explain exactly what the author is focusing on. The description of the emotions could also have been more vivid."
+      });
     }
   } catch (e) {
     console.log(e);
