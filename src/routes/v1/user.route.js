@@ -6,6 +6,7 @@ const router = express.Router();
 router.get("/health", userController.health)
 
 router.post('/ml/get-question', userController.getQuestions)
+router.post('/ml/rate-text', userController.rateText)
 
 module.exports = router;
 

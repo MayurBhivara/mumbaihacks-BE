@@ -1,5 +1,5 @@
 
-const {getQuestionsFromGPT} = require('./gptcontroller');
+const {getQuestionsFromGPT, rateComprehension} = require('./gptcontroller');
 
 const health = async (req, res) =>{
   return res.send({status:true});
@@ -42,7 +42,28 @@ const getQuestions = async (req, res) => {
   }
 }
 
+
+const rateText = async(req, res) => {
+  try {
+    const text = req?.body?.text;
+    const difficulty = req?.body?.difficulty || "easy";
+    const userText = req?.body?.userText;
+    if(text && difficulty && userText){
+      let response = await rateComprehension(text, difficulty);
+      // let response = '{}';
+      response = response.trim();
+      response = JSON.parse(response);
+      return res.status(200).send(response);
+    } else{
+      return res.status(400).send("Invalid input. text or difficulty or userText missing");
+    }
+  } catch(e){
+    console.log(e);
+    return {};
+  }
+}
 module.exports = {
   health,
-  getQuestions
+  getQuestions,
+  rateText
 };
