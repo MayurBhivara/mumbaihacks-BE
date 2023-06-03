@@ -1,13 +1,33 @@
 const express = require('express');
 const userController = require('../../controllers/user.controller');
-
+const multer = require('multer');
+const path = require('path');
 const router = express.Router();
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 10)
+      cb(null, file.fieldname + '-' + uniqueSuffix +".jpg")
+    }
+  })
+
+  
+// Set the destination folder for storing uploaded images
+const uploadDirectory = 'uploads/';
+
+// Create a multer instance with the destination configuration
+// const upload = multer({ dest: uploadDirectory });
+const upload = multer({storage:storage});
 
 router.get("/health", userController.health)
 
 router.post('/ml/get-question', userController.getQuestions)
 router.post('/ml/rate-text', userController.rateText)
 router.post('/ml/get-text-from-image', userController.getTextFromImages)
+router.post('/ml/upload-images', upload.array('file', 12), userController.uploadImages)
 
 module.exports = router;
 
