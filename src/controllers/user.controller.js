@@ -32,7 +32,8 @@ const getQuestions = async (req, res) => {
           type: "mcq"
         }
       }
-      return res.status(200).send(responseObj);
+      // return res.status(200).send(responseObj);
+      return responseObj;
     } else {
       return res.status(400).send('Text Cannot be empty');
     }
@@ -70,16 +71,17 @@ const getTextFromImages = async (images = []) => {
   try {
     const worker = await createWorker({});
 
-    (async () => {
+    return (async () => {
       await worker.loadLanguage('eng');
       await worker.initialize('eng');
       const { data: { text } } = await worker.recognize(images[0]);
       await worker.terminate();
-      return res.status(200).send(data);
+      // return res.status(200).send(data);
+      return text;
     })();
   } catch (e) {
     console.log("Error", e)
-    return res.status(400).send({});
+    // return res.status(400).send({});
   }
 }
 
@@ -97,11 +99,15 @@ const uploadImages = async (req, res) => {
 
     files.forEach((file) => {
       // console.log(file);
-      uploadedImages.push(file?.filename);
+      const path = __dirname.split("/src")[0] +"/uploads/"+ file?.filename
+      uploadedImages.push(path);
     });
+    const text = await getTextFromImages(uploadedImages);
+    req.body.text = text;
+    const data = await getQuestions(req, res);
+    data.text = text;
+    return res.status(200).send(data);
 
-    // Send a response with the uploaded image information
-    return res.json({ images: uploadedImages });
   } catch (e) {
     console.log(e)
   }
