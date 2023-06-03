@@ -3,7 +3,9 @@ const userController = require('../../controllers/user.controller');
 
 const router = express.Router();
 
-router.get("/health", userController?.health)
+router.get("/health", userController.health)
+
+router.post('/ml/get-question', userController.getQuestions)
 
 module.exports = router;
 
