@@ -21,12 +21,12 @@ module.exports.rateComprehension = async (message, userText, difficulty) => {
 
     const prompt = `
     The passage is: ${message}
-    
+
     Judge my ability to comprehend the above. Give response as a rating out of 10 based on the below format: 
-    {
+    "{
         "rating": "8.65",
         "justification": "Reason"
-    }
+    }"
     The justification key should contain the reason for the rating. Also say what can be improved to get a perfect 10 rating. 
     
     The difficulty I have chosen is ${difficulty}.
@@ -34,6 +34,5 @@ module.exports.rateComprehension = async (message, userText, difficulty) => {
     My comprehension:
     ${userText}
     `
-    
     return  await GPT4(prompt);
 };

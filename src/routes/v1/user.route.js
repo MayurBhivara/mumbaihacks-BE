@@ -7,6 +7,7 @@ router.get("/health", userController.health)
 
 router.post('/ml/get-question', userController.getQuestions)
 router.post('/ml/rate-text', userController.rateText)
+router.post('/ml/get-text-from-image', userController.getTextFromImages)
 
 module.exports = router;
 

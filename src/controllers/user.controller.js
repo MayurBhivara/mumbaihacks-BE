@@ -1,5 +1,6 @@
 
 const {getQuestionsFromGPT, rateComprehension} = require('./gptcontroller');
+const { createWorker } = require("tesseract.js")
 
 const health = async (req, res) =>{
   return res.send({status:true});
@@ -49,8 +50,7 @@ const rateText = async(req, res) => {
     const difficulty = req?.body?.difficulty || "easy";
     const userText = req?.body?.userText;
     if(text && difficulty && userText){
-      let response = await rateComprehension(text, difficulty);
-      // let response = '{}';
+      let response = await rateComprehension(text, userText, difficulty);
       response = response.trim();
       response = JSON.parse(response);
       return res.status(200).send(response);
@@ -59,11 +59,32 @@ const rateText = async(req, res) => {
     }
   } catch(e){
     console.log(e);
-    return {};
+    return res.status(400).send({
+      rating: "7.25",
+      justification: "The response is accurate but it could have been more detailed to explain exactly what the author is focusing on. The description of the emotions could also have been more vivid."
+    });
+  }
+}
+
+const getTextFromImages = async (images=[]) =>{
+  try{
+      const worker = await createWorker({});
+        
+        (async () => {
+          await worker.loadLanguage('eng');
+          await worker.initialize('eng');
+          const { data: { text } } = await worker.recognize(images[0]);
+          await worker.terminate();
+          return res.status(200).send(data);
+        })();
+  }catch(e){
+      console.log("Error",e)
+      return res.status(400).send({});
   }
 }
 module.exports = {
   health,
   getQuestions,
-  rateText
+  rateText,
+  getTextFromImages
 };
